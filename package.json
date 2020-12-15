@@ -16,12 +16,12 @@
     "appId" : "4note4",
     "win" : {
       "target" : ["nsis"],
-      "icon" : "src/assets/images/app-icon.png"
+      "icon" : "src/assets/images/app-icon.ico"
     },
     "nsis" : {
-      "installerIcon" : "src/assets/images/app-icon.png",
-      "uninstallerIcon" : "src/assets/images/app-icon.png",
-      "uninstallerDisplayName" : "4NOTE4",
+      "installerIcon" : "src/assets/images/app-icon.ico",
+      "uninstallerIcon" : "src/assets/images/app-icon.ico",
+      "uninstallDisplayName" : "4NOTE4",
       "oneClick" : false,
       "allowToChangeInstallationDirectory" : true
     }
