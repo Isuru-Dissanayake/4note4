@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>4NOTE4</title>
+    <link rel="stylesheet" href="index.css" />
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link rel="stylesheet" 
+      href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
+      integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" 
+      crossorigin="anonymous"
+    >
+    <script defer src="render.js"></script>
+  </head>
+  <body style="-webkit-app-region: no-drag">
+    <div class="home-container">
+      <div class="side-menu">
+        <div class="titlebar-side-menu">4NOTE4</div>
+        <div id="side-menu-items" class="side-menu-items">
+          <div id="quick-links-container" class="quick-links-container">
+            <div class="quick-links-title">Quick Links</div>
+            <div class="all-notes">
+              <div class="tag-dot">
+                <span class="dot"></span>
+              </div>
+              <div class="tag-name">
+                All notes
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="remove-notes-warning" ></div>
+        <div class='remove-notes-container'>
+          <i class="fas fa-exclamation-triangle"></i>
+          <div class='clear-data-text' onclick="handleRemoveAllNotes()">Remove All Notes</div>
+        </div>
+      </div>
+      <div class="notes-container">
+        <div class="titlebar-notes-container"></div>
+        <div class="note-container-header">
+          <div class="note-container-title">All Notes</div>
+          <i id="plus-note-icon" class="fas fa-plus" onclick= "onClickAddNoteButton()"></i>
+        </div>
+        <div class="notes-list-scorll">
+          <div id="notes-list" class="notes-list">
+          </div>
+        </div>
+      </div>
+      <div id="add-note-container" class="add-note-container">
+        <div class="titlebar-notes-container">
+          <div class="title-bar-icons">
+            <i class="fas fa-minus" onclick="onClickMinus()"></i>
+            <div id="max-icon"><i class="far fa-square" onclick="onClickMaximize()"></i></div>
+            <div id="close-icon"><i class="fas fa-times" onclick="onClickClose()"></i></div>
+          </div>
+        </div>
+        <div id="new-note-container" class="new-note-container">
+          <div  class="new-note-image-container">
+            <i class="fas fa-plus" onclick= "onClickAddNoteButton()"></i>
+            <img class="add-note-image" src="./assets/images/add-note.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
