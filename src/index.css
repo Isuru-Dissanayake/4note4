@@ -100,8 +100,10 @@ body {
   height: 100%;
 }
 .icon-container {
+  display: flex;
   margin: 5px;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
 }
 .fa-angle-left {
   cursor: pointer;
@@ -109,7 +111,7 @@ body {
   color: #ffffff;
   margin-right: 20px;
 }
-.fa-check{
+.fa-check {
   cursor: pointer;
   font-size: 20px;
   color: #ffffff;
@@ -360,6 +362,7 @@ body {
   width: 90%;
   padding: 10px;
   margin-bottom: 8px;
+  border-radius: 10px;
 }
 .note-card-title {
   display: flex;
@@ -381,6 +384,14 @@ body {
   margin-right: 8px;
   margin-top: 5px;
 }
+.dot-side-menu {
+  height: 11px;
+  width: 11px;
+  background-color:#00FFFF;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
 .tag-dot {
   margin-right: 0px;
   margin-top: 0px;
@@ -395,22 +406,40 @@ body {
   margin-right: 20px;
 }
 .side-menu-items {
-  padding-top: 10px;
-  padding-left: 20px;
+  padding-top: 15px;
 }
 .quick-links-title {
   font-size: 12px;
   font-weight: bold;
   color: #808080;
   padding-bottom: 8px;
+  padding-left: 20px;
 }
 .all-notes {
+  background-color: #323232;
   display: flex;
   flex-direction: row;
   cursor: pointer;
+  padding-left: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 30px;
+  align-items: center;
+  border-radius: 15px;
 }
 .tag-name {
-  margin-top: 3px;
+  margin-top: 0px;
   font-size: 14px;
-  color: #00FFFF
+  color: #00FFFF;
+}
+.note-tag {
+  background-color: #1f1f1f;
+  display: flex;
+  flex-direction: row;
+  cursor: default;
+  margin-top: 3px;
+  padding-left: 10px;
+  padding-right: 15px;
+  align-items: center;
+  border-radius: 15px;
 }

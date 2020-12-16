@@ -127,6 +127,14 @@ function showCardContent(ind) {
                         <div id="icon-container" class="icon-container">
                           <i class="fas fa-pen" onclick="onClickEditNote(${ind})"></i>
                           <i class="fas fa-trash" onclick="onClickDeleteNote(${ind})"></i>
+                          <div class="note-tag">
+                            <div class="tag-dot">
+                              <span class="dot-side-menu"></span>
+                            </div>
+                            <div class="tag-name">
+                              All notes
+                            </div>
+                          </div>
                           <i id="save-warning-text" class="save-warning-text"></i>
                         </div>
                         <div class="content-form-div">
