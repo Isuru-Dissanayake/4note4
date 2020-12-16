@@ -26,7 +26,15 @@ function saveNextNoteIndex(i) {
   var nextNoteIndex = {ind: i}
   localStorage.setItem('newNoteIndex', JSON.stringify(nextNoteIndex));
 }
+function loadTagData() {
+  var tagData = {
+    "All notes":{tag_name: "All notes", tag_color: "#ffffff"},
+    "Work":{tag_name: "Work", tag_color: "#00FFFF"},
+    "Internship":{tag_name: "Internship", tag_color: "#FF7F50"}
+  }
 
+  return tagData;
+}
 function onClickClose() {
   ipcRenderer.send('close-me')
 };
@@ -41,9 +49,34 @@ function onClickRestore() {
   remote.BrowserWindow.getFocusedWindow().restore();
   document.getElementById("max-icon").innerHTML = '<i class="far fa-square" onclick="onClickMaximize()"></i>'
 }
+function changeNoteTag(tagName, tagColor) {
+  document.getElementById("tag-name-editable").innerText = tagName;
+  document.getElementById("tag-name-editable").style.color = tagColor;
+  document.getElementById("tag-dot-editable").style.backgroundColor = tagColor;
+}
 function onClickAddNoteButton (){
   console.log('onClickAddNoteButton');
   document.getElementById("new-note-container").innerHTML = newNoteInputForm;
+  var dropdownContent = document.getElementById("dropdown-content")
+  var tagData = loadTagData();
+  var tagDataIndexes = Object.keys(tagData);
+  tagDataIndexes.reverse();
+  tagDataIndexes.forEach((id)=> {
+    var ind = id;
+    var tagName = tagData[id].tag_name;
+    var tagColor = tagData[id].tag_color;
+    const drowdownItem = `<div id="tag" class="drop-down-item" onclick="changeNoteTag('${tagName}','${tagColor}')">
+                            <div class="tag-dot">
+                              <span id="drowdown-dot-${ind}" class="dot-side-menu"></span>
+                            </div>
+                            <div id="dropdown-name-${ind}" class="tag-name">
+                              ${tagName}
+                            </div>
+                          </div>`
+    dropdownContent.innerHTML += drowdownItem;
+    document.getElementById('drowdown-dot-'+ind).style.backgroundColor = tagColor;
+    document.getElementById('dropdown-name-'+ind).style.color = tagColor;
+  });
   var newNoteIndex = getNewNoteIndex();
   newNoteIndex = newNoteIndex + 1;
   saveNextNoteIndex(newNoteIndex);
@@ -65,17 +98,18 @@ function onClickNewNoteSave() {
   var title = document.getElementById("new-note-title-box").value;
   var description = document.getElementById("new-note-description-box").value;
   var date = current.toLocaleString();
+  var tagId = document.getElementById('tag-name-editable').textContent;
   if (title === "" || description === "") {
     document.getElementById("save-warning-text").innerHTML = 'Title/ Description cannot be empty.';
   } else {
     if (notesDetails === 'null' || notesDetails === null) {
       notesDetails = {}
-      notesDetails[newNoteIndex] = {title: title, date: date, description: description}
+      notesDetails[newNoteIndex] = {title: title, date: date, description: description, tagId: tagId}
       console.log('notesDetails', notesDetails);
       localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
       document.getElementById("save-warning-text").innerHTML = 'Saved successfully.';
     }else {
-      notesDetails[newNoteIndex] = {title: title, date: date, description: description}
+      notesDetails[newNoteIndex] = {title: title, date: date, description: description, tagId: tagId}
       console.log('notesDetails', notesDetails);
       localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
       document.getElementById("save-warning-text").innerHTML = 'Saved successfully.';
@@ -86,7 +120,7 @@ function onClickNewNoteSave() {
 
 function loadNotesDetails() {
   var notesDetails = localStorage.getItem('notesDetails');
-  console.log('loadNotesDetails', notesDetails);
+  console.log('loadNotesDetails loading', notesDetails);
 }
 
 function handleRemoveAllNotes() {
@@ -127,12 +161,14 @@ function showCardContent(ind) {
                         <div id="icon-container" class="icon-container">
                           <i class="fas fa-pen" onclick="onClickEditNote(${ind})"></i>
                           <i class="fas fa-trash" onclick="onClickDeleteNote(${ind})"></i>
-                          <div class="note-tag">
+                          <div id="note-tag-editable" class="note-tag-editable">
                             <div class="tag-dot">
-                              <span class="dot-side-menu"></span>
+                              <span id="tag-dot-editable" class="dot-side-menu"></span>
                             </div>
-                            <div class="tag-name">
-                              All notes
+                            <div id="tag-name-editable" class="tag-name">
+                              ${currentNote.tagId}
+                            </div>
+                            <div id="dropdown-content" class="dropdown-content">
                             </div>
                           </div>
                           <i id="save-warning-text" class="save-warning-text"></i>
@@ -144,12 +180,20 @@ function showCardContent(ind) {
                       </div>`
   noteContainer.innerHTML = '';
   noteContainer.innerHTML = cardDetails;
+  var tagData = loadTagData();
+  document.getElementById("tag-name-editable").style.color = tagData[currentNote.tagId].tag_color;
+  document.getElementById("tag-dot-editable").style.backgroundColor = tagData[currentNote.tagId].tag_color;
 }
 function renderNoteCards() {
   console.log('renderNoteCards')
   var cardList = document.getElementById("notes-list");
   cardList.innerHTML = ''
-  var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
+  var notesDetails = localStorage.getItem('notesDetails');
+  if (notesDetails === null){
+    notesDetails = {}
+  } else {
+    notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
+  }
   var articleIndexes = Object.keys(notesDetails);
   articleIndexes.reverse();
   articleIndexes.forEach((id)=> {
@@ -182,9 +226,39 @@ function onClickEditNote(ind) {
   const iconSet = `<i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>
                    <i class="fas fa-check" onclick="onClickCurrentNoteSave(${ind})" ></i>
                    <i class="fas fa-trash" onclick="onClickDeleteNote(${ind})"></i>
+                   <div id="note-tag-editable" class="note-tag-editable">
+                      <div class="tag-dot">
+                        <span id="tag-dot-editable" class="dot-side-menu"></span>
+                      </div>
+                      <div id="tag-name-editable" class="tag-name">
+                        All notes
+                      </div>
+                      <div id="dropdown-content" class="dropdown-content">
+                      </div>
+                   </div>
                    <i id="save-warning-text" class="save-warning-text"></i>
                   `
   iconContainer.innerHTML = iconSet
+  var dropdownContent = document.getElementById("dropdown-content")
+  var tagData = loadTagData();
+  var tagDataIndexes = Object.keys(tagData);
+  tagDataIndexes.reverse();
+  tagDataIndexes.forEach((id)=> {
+    var ind = id;
+    var tagName = tagData[id].tag_name;
+    var tagColor = tagData[id].tag_color;
+    const drowdownItem = `<div id="tag" class="drop-down-item" onclick="changeNoteTag('${tagName}','${tagColor}')">
+                            <div class="tag-dot">
+                              <span id="drowdown-dot-${ind}" class="dot-side-menu"></span>
+                            </div>
+                            <div id="dropdown-name-${ind}" class="tag-name">
+                              ${tagName}
+                            </div>
+                          </div>`
+    dropdownContent.innerHTML += drowdownItem;
+    document.getElementById('drowdown-dot-'+ind).style.backgroundColor = tagColor;
+    document.getElementById('dropdown-name-'+ind).style.color = tagColor;
+  });
 }
 function onClickCurrentNoteSave(ind){
   var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
@@ -192,26 +266,37 @@ function onClickCurrentNoteSave(ind){
   var title = document.getElementById("new-note-title-div").textContent
   var description = document.getElementById("new-note-description-div").textContent
   var date = notesDetails[newNoteIndex].date
+  var tagId = document.getElementById('tag-name-editable').textContent;
   if (title === "" || description === "") {
     document.getElementById("save-warning-text").innerHTML = 'Title/ Description cannot be empty.';
   } else {
-    notesDetails[newNoteIndex] = {title: title, date: date, description: description}
+    notesDetails[newNoteIndex] = {title: title, date: date, description: description, tagId: tagId}
     localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
     document.getElementById("save-warning-text").innerHTML = 'Saved successfully.';
   }
   renderNoteCards();
 }
-const newNoteInputForm = '<div id="new-note-input-form" class="new-note-input-form">' +
-                          '<div class="icon-container">' +
-                            '<i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>' + 
-                            '<i class="fas fa-check" onclick="onClickNewNoteSave()" ></i>' +
-                            '<i id="save-warning-text" class="save-warning-text"></i>' +
-                          '</div>' +
-                          '<div class="content-form">' +
-                          '<textarea id="new-note-title-box" class="title-box" placeholder="Title....." onkeyup="clearTitleError()"></textarea>' +
-                          '<textarea id="new-note-description-box" class="description-box" placeholder="Description....." onkeyup="clearTitleError()"></textarea>' +
-                          '</div>' +
-                        '</div>'
+const newNoteInputForm = `<div id="new-note-input-form" class="new-note-input-form">
+                          <div class="icon-container">
+                            <i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>
+                            <i class="fas fa-check" onclick="onClickNewNoteSave()" ></i>
+                            <div id="note-tag-editable" class="note-tag-editable">
+                              <div class="tag-dot">
+                                <span id="tag-dot-editable" class="dot-side-menu"></span>
+                              </div>
+                              <div id="tag-name-editable" class="tag-name">
+                                All notes
+                              </div>
+                              <div id="dropdown-content" class="dropdown-content">
+                              </div>
+                            </div>
+                            <i id="save-warning-text" class="save-warning-text"></i>
+                          </div>
+                          <div class="content-form">
+                          <textarea id="new-note-title-box" class="title-box" placeholder="Title....." onkeyup="clearTitleError()"></textarea>
+                          <textarea id="new-note-description-box" class="description-box" placeholder="Description....." onkeyup="clearTitleError()"></textarea>
+                          </div>
+                        </div>`
 
 const createNewNoteInputForm =  '<div  class="new-note-image-container">' +
                                   '<i class="fas fa-plus" onclick= "onClickAddNoteButton()"></i>' +
@@ -225,3 +310,4 @@ const removeNotesWarning = '<div class="remove-note-warning">' +
                               '<div class="no-button" onclick="dontRemoveAllNotes()">No</div>'+
                             '</div>'+
                            '</div>'
+
