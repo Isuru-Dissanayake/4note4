@@ -32,6 +32,12 @@ body {
   color: white;
   -webkit-app-region: drag;
 }
+.disable-select {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
 .titlebar-notes-container {
   display: flex;
   flex-direction: column;
@@ -470,4 +476,25 @@ body {
 }
 .drop-down-item:hover {
   background-color: #323232;
+}
+.quick-link-tag {
+  background-color: #1f1f1f;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  padding-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  height: 30px;
+  align-items: center;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.quick-link-tag:hover {
+  background-color: #323232;
+}
+.fa-tag {
+  font-size: 12px;
+  margin-right: 8px;
 }

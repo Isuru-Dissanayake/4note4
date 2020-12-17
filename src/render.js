@@ -5,7 +5,8 @@ const { dialog, Menu } = remote;
 
 window.onload = function() {
   loadNotesDetails();
-  renderNoteCards();
+  renderQuickLinks();
+  renderQuickLinkNotes('All notes');
 }
 
 Object.size = function(obj) {
@@ -30,7 +31,8 @@ function loadTagData() {
   var tagData = {
     "All notes":{tag_name: "All notes", tag_color: "#ffffff"},
     "Work":{tag_name: "Work", tag_color: "#00FFFF"},
-    "Internship":{tag_name: "Internship", tag_color: "#FF7F50"}
+    "Internship":{tag_name: "Internship", tag_color: "#FF7F50"},
+    "University":{tag_name: "University", tag_color: "#800080"}
   }
 
   return tagData;
@@ -84,7 +86,6 @@ function onClickAddNoteButton (){
 function onClickNewNoteBackButton() {
   console.log('onClickNewNoteBackButton');
   document.getElementById("new-note-container").innerHTML = createNewNoteInputForm;
-  renderNoteCards();
 };
 
 function onClickNewNoteSave() {
@@ -99,6 +100,7 @@ function onClickNewNoteSave() {
   var description = document.getElementById("new-note-description-box").value;
   var date = current.toLocaleString();
   var tagId = document.getElementById('tag-name-editable').textContent;
+  console.log('taggggggggg', tagId);
   if (title === "" || description === "") {
     document.getElementById("save-warning-text").innerHTML = 'Title/ Description cannot be empty.';
   } else {
@@ -115,7 +117,7 @@ function onClickNewNoteSave() {
       document.getElementById("save-warning-text").innerHTML = 'Saved successfully.';
     }
   }
-  renderNoteCards();
+  renderQuickLinkNotes(tagId);
 }
 
 function loadNotesDetails() {
@@ -131,7 +133,7 @@ function removeAllnotes() {
   window.localStorage.removeItem('notesDetails');
   document.getElementById('remove-notes-warning').innerHTML = '';
   document.getElementById('new-note-container').innerHTML = createNewNoteInputForm
-  renderNoteCards();
+  renderQuickLinkNotes('All notes');
 }
 function dontRemoveAllNotes() {
   document.getElementById('remove-notes-warning').innerHTML = '';
@@ -150,9 +152,12 @@ function showCardContent(ind) {
   articleIndexes.forEach((id)=>{
     if (parseInt(id) === parseInt(ind)){
       currentCard.style.background = "#323232";
-    } else {
+    } else{
       var checkCard = 'card-' + id;
-      document.getElementById(checkCard).style.background = "#282828";
+      var cardAvailable = document.getElementById(checkCard);
+      if (cardAvailable) {
+        document.getElementById(checkCard).style.background = "#282828";
+      }
     }
   });
   var currentNote = notesDetails[ind];
@@ -184,10 +189,12 @@ function showCardContent(ind) {
   document.getElementById("tag-name-editable").style.color = tagData[currentNote.tagId].tag_color;
   document.getElementById("tag-dot-editable").style.backgroundColor = tagData[currentNote.tagId].tag_color;
 }
-function renderNoteCards() {
+function renderNoteCards(tagType) {
   console.log('renderNoteCards')
+  document.getElementById('note-container-title').innerHTML = tagType;
   var cardList = document.getElementById("notes-list");
   cardList.innerHTML = ''
+  var tagData = loadTagData();
   var notesDetails = localStorage.getItem('notesDetails');
   if (notesDetails === null){
     notesDetails = {}
@@ -200,24 +207,41 @@ function renderNoteCards() {
     var ind = id;
     var title = notesDetails[id].title;
     var date = notesDetails[id].date;
-    const noteCard = `<div id="card-${ind}" class="note-card" onclick="showCardContent(${ind})" >
+    var tagId = notesDetails[id].tagId;
+    if (tagType === 'All notes') {
+      const noteCard = `<div id="card-${ind}" class="note-card" onclick="showCardContent(${ind})" >
                         <div class="note-card-title">
                           <div class="tag-dot">
-                            <span class="dot"></span>
+                            <span id="card-dot-${ind}" class="dot"></span>
                           </div>
                           <div>${title}</div>
                         </div>
                         <div class="note-card-date">${date}</div>
                       </div>`
-    cardList.innerHTML += noteCard;
+      cardList.innerHTML += noteCard;
+      document.getElementById('card-dot-' + ind).style.backgroundColor = tagData[tagId].tag_color;
+    } else if(tagId === tagType) {
+      const noteCard = `<div id="card-${ind}" class="note-card" onclick="showCardContent(${ind})" >
+                        <div class="note-card-title">
+                          <div class="tag-dot">
+                            <span id="card-dot-${ind}" class="dot"></span>
+                          </div>
+                          <div>${title}</div>
+                        </div>
+                        <div class="note-card-date">${date}</div>
+                      </div>`
+      cardList.innerHTML += noteCard;
+      document.getElementById('card-dot-' + ind).style.backgroundColor = tagData[tagId].tag_color;
+    }
   });
 }
 
 function onClickDeleteNote(ind) {
   var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
+  var tagInd = notesDetails[ind].tagId;
   delete notesDetails[parseInt(ind)];
   localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
-  onClickNewNoteBackButton();
+  renderQuickLinkNotes(tagInd);
 }
 function onClickEditNote(ind) {
   document.getElementById('new-note-title-div').contentEditable = true;
@@ -230,9 +254,7 @@ function onClickEditNote(ind) {
                       <div class="tag-dot">
                         <span id="tag-dot-editable" class="dot-side-menu"></span>
                       </div>
-                      <div id="tag-name-editable" class="tag-name">
-                        All notes
-                      </div>
+                      <div id="tag-name-editable" class="tag-name">All notes</div>
                       <div id="dropdown-content" class="dropdown-content">
                       </div>
                    </div>
@@ -241,6 +263,10 @@ function onClickEditNote(ind) {
   iconContainer.innerHTML = iconSet
   var dropdownContent = document.getElementById("dropdown-content")
   var tagData = loadTagData();
+  var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
+  document.getElementById('tag-name-editable').innerHTML = notesDetails[ind].tagId;
+  document.getElementById('tag-name-editable').style.color = tagData[notesDetails[ind].tagId].tag_color;
+  document.getElementById('tag-dot-editable').style.backgroundColor = tagData[notesDetails[ind].tagId].tag_color;
   var tagDataIndexes = Object.keys(tagData);
   tagDataIndexes.reverse();
   tagDataIndexes.forEach((id)=> {
@@ -274,8 +300,41 @@ function onClickCurrentNoteSave(ind){
     localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
     document.getElementById("save-warning-text").innerHTML = 'Saved successfully.';
   }
-  renderNoteCards();
+  renderQuickLinkNotes(tagId);
 }
+function renderQuickLinks() {
+  quickLinkContent = document.getElementById('quick-links-container');
+  var tagData = loadTagData();
+  var tagDataIndexes = Object.keys(tagData);
+  tagDataIndexes.forEach((id)=> {
+    var ind = id;
+    var tagName = tagData[id].tag_name;
+    var tagColor = tagData[id].tag_color;
+    const drowdownItem = `<div id="quick-link-tag-${ind}" class="quick-link-tag" onclick="renderQuickLinkNotes('${ind}')">
+                            <div class="tag-dot">
+                              <i id="quick-link-tag-dot-${ind}" class="fas fa-tag"></i>
+                            </div>
+                            <div id="quick-link-tag-name-${ind}" class="tag-name">
+                              ${tagName}
+                            </div>
+                          </div>`
+    quickLinkContent.innerHTML += drowdownItem;
+    document.getElementById('quick-link-tag-dot-'+ind).style.color = tagColor;
+  });
+}
+function renderQuickLinkNotes(ind) {
+  var tagData = loadTagData();
+  var tagDataIndexes = Object.keys(tagData);
+  tagDataIndexes.forEach((id)=>{
+    if (id === ind) {
+      document.getElementById("quick-link-tag-" + id).style.backgroundColor = '#323232';
+    } else {
+      document.getElementById("quick-link-tag-" + id).style.backgroundColor = '#1f1f1f';
+    }
+  });
+  renderNoteCards(ind);
+}
+
 const newNoteInputForm = `<div id="new-note-input-form" class="new-note-input-form">
                           <div class="icon-container">
                             <i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>
@@ -284,9 +343,7 @@ const newNoteInputForm = `<div id="new-note-input-form" class="new-note-input-fo
                               <div class="tag-dot">
                                 <span id="tag-dot-editable" class="dot-side-menu"></span>
                               </div>
-                              <div id="tag-name-editable" class="tag-name">
-                                All notes
-                              </div>
+                              <div id="tag-name-editable" class="tag-name">All notes</div>
                               <div id="dropdown-content" class="dropdown-content">
                               </div>
                             </div>
@@ -311,3 +368,11 @@ const removeNotesWarning = '<div class="remove-note-warning">' +
                             '</div>'+
                            '</div>'
 
+const quickLinkTag = `<div class="all-notes">
+                        <div class="tag-dot">
+                          <span class="dot-side-menu"></span>
+                        </div>
+                        <div class="tag-name">
+                          All notes
+                        </div>
+                      </div>`
