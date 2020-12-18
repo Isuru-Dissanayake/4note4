@@ -10,7 +10,7 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #282828;
+  background: none;
 }
  
 /* Handle */
@@ -150,8 +150,7 @@ body {
   flex: 8;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  overflow-x: hidden;
+  
 }
 .content-form {
   flex: 8;
@@ -413,6 +412,9 @@ body {
 }
 .side-menu-items {
   padding-top: 15px;
+  height: 85%;
+  overflow: auto;
+  overflow-x: hidden;
 }
 .quick-links-title {
   font-size: 12px;
@@ -477,6 +479,12 @@ body {
 .drop-down-item:hover {
   background-color: #323232;
 }
+.quick-links-container {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
+}
 .quick-link-tag {
   background-color: #1f1f1f;
   display: flex;
@@ -497,4 +505,94 @@ body {
 .fa-tag {
   font-size: 12px;
   margin-right: 8px;
+}
+.quick-link-edit {
+  margin-left: 20px;
+  font-size: 10px;
+  color: #808080;
+  margin-bottom: 0px;
+}
+.notes-container-plus {
+  margin-bottom: 0px;
+}
+.manage-quick-links-title {
+  color: #808080;
+  margin-bottom: 20px;
+}
+.manage-quick-link-tag{
+  display: flex;
+  flex-direction: row;
+  cursor: default;
+  padding-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  height: 30px;
+  align-items: center;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 300px;
+}
+.quick-link-delete {
+  justify-items: flex-end;
+  margin-left: 20px;
+  font-size: 10px;
+  margin-right: 0px;
+  color: #808080;
+  margin-bottom: 0px;
+}
+.quick-link-check {
+  justify-items: flex-end;
+  margin-left: 20px;
+  font-size: 14px;
+  margin-right: 0px;
+  color: #808080;
+  margin-bottom: 0px;
+}
+.quick-link-times {
+  cursor: pointer;
+  justify-items: flex-end;
+  margin-left: 10px;
+  font-size: 14px;
+  color: #808080;
+  margin-bottom: 0px;
+}
+.quick-link-times:hover {
+  color: #00FFFF;
+}
+.quick-link-add {
+  font-size: 15px;
+  margin-left: 15px;
+}
+.tag-name-new {
+  font-family: 'Poppins';
+  cursor: auto;
+  background-color: #323232;
+  border: none;
+  margin-top: 0px;
+  font-size: 14px;
+  color: #ffffff;
+  width: 140px;
+}
+.tag-name-new:focus {
+  outline: none;
+}
+.tag-dot-new{
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 0px;
+}
+.tag-color-pick {
+  background-color: #323232;
+  border: none;
+  outline: none;
+  width: 20px;
+}
+.manage-quick-links-list {
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+.manage-quick-links-div {
+  height: 90%;
 }

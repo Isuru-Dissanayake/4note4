@@ -18,9 +18,12 @@
         <div class="titlebar-side-menu">4NOTE4</div>
         <div id="side-menu-items" class="side-menu-items">
           <div id="quick-links-container" class="quick-links-container">
-            <div class="quick-links-title">Quick Links</div>
+            <div id="quick-links-title" class="quick-links-title">
+              Quick Links
+              <i class="fas fa-plus quick-link-edit" onclick="manageQuickLinks()"></i>
+            </div>
           </div>
-        </div>
+        </div>                                     
         <div id="remove-notes-warning" ></div>
         <div class='remove-notes-container'>
           <i class="fas fa-exclamation-triangle"></i>
@@ -31,7 +34,7 @@
         <div class="titlebar-notes-container"></div>
         <div class="note-container-header">
           <div id="note-container-title" class="note-container-title">All Notes</div>
-          <i id="plus-note-icon" class="fas fa-plus" onclick= "onClickAddNoteButton()"></i>
+          <i id="plus-note-icon" class="fas fa-plus notes-container-plus" onclick= "onClickAddNoteButton()"></i>
         </div>
         <div class="notes-list-scorll">
           <div id="notes-list" class="notes-list">

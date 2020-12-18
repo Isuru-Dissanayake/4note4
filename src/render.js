@@ -28,13 +28,10 @@ function saveNextNoteIndex(i) {
   localStorage.setItem('newNoteIndex', JSON.stringify(nextNoteIndex));
 }
 function loadTagData() {
-  var tagData = {
-    "All notes":{tag_name: "All notes", tag_color: "#ffffff"},
-    "Work":{tag_name: "Work", tag_color: "#00FFFF"},
-    "Internship":{tag_name: "Internship", tag_color: "#FF7F50"},
-    "University":{tag_name: "University", tag_color: "#800080"}
-  }
-
+  var tagData = JSON.parse(localStorage.getItem('tagData'));
+  if (tagData === null || tagData === 'null') {
+    tagData = {"All notes":{tag_name: "All notes", tag_color: "#ffffff"}}
+  } 
   return tagData;
 }
 function onClickClose() {
@@ -180,7 +177,7 @@ function showCardContent(ind) {
                         </div>
                         <div class="content-form-div">
                         <div id="new-note-title-div" class="title-box" placeholder="Title....." onkeyup="clearTitleError()" contentEditable="false">${currentNote.title}</div>
-                        <div id="new-note-description-div" class="description-box" placeholder="Description....." onkeyup="clearTitleError()" contentEditable="false">${currentNote.description}</div>
+                        <textarea id="new-note-description-div" class="description-box" placeholder="Description....." onkeyup="clearTitleError()" readOnly>${currentNote.description}</textarea>
                         </div>
                       </div>`
   noteContainer.innerHTML = '';
@@ -195,6 +192,7 @@ function renderNoteCards(tagType) {
   var cardList = document.getElementById("notes-list");
   cardList.innerHTML = ''
   var tagData = loadTagData();
+  console.log('tagdata', tagData)
   var notesDetails = localStorage.getItem('notesDetails');
   if (notesDetails === null){
     notesDetails = {}
@@ -219,6 +217,7 @@ function renderNoteCards(tagType) {
                         <div class="note-card-date">${date}</div>
                       </div>`
       cardList.innerHTML += noteCard;
+      console.log('tag color',tagData[tagId].tag_color);
       document.getElementById('card-dot-' + ind).style.backgroundColor = tagData[tagId].tag_color;
     } else if(tagId === tagType) {
       const noteCard = `<div id="card-${ind}" class="note-card" onclick="showCardContent(${ind})" >
@@ -245,7 +244,7 @@ function onClickDeleteNote(ind) {
 }
 function onClickEditNote(ind) {
   document.getElementById('new-note-title-div').contentEditable = true;
-  document.getElementById('new-note-description-div').contentEditable = true;
+  document.getElementById('new-note-description-div').readOnly = false;
   var iconContainer = document.getElementById("icon-container");
   const iconSet = `<i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>
                    <i class="fas fa-check" onclick="onClickCurrentNoteSave(${ind})" ></i>
@@ -290,7 +289,7 @@ function onClickCurrentNoteSave(ind){
   var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
   var newNoteIndex = parseInt(ind);
   var title = document.getElementById("new-note-title-div").textContent
-  var description = document.getElementById("new-note-description-div").textContent
+  var description = document.getElementById("new-note-description-div").value
   var date = notesDetails[newNoteIndex].date
   var tagId = document.getElementById('tag-name-editable').textContent;
   if (title === "" || description === "") {
@@ -304,6 +303,10 @@ function onClickCurrentNoteSave(ind){
 }
 function renderQuickLinks() {
   quickLinkContent = document.getElementById('quick-links-container');
+  quickLinkContent.innerHTML = `<div id="quick-links-title" class="quick-links-title">
+                                  Quick Links
+                                  <i class="fas fa-plus quick-link-edit" onclick="manageQuickLinks()"></i>
+                                </div>`
   var tagData = loadTagData();
   var tagDataIndexes = Object.keys(tagData);
   tagDataIndexes.forEach((id)=> {
@@ -321,6 +324,7 @@ function renderQuickLinks() {
     quickLinkContent.innerHTML += drowdownItem;
     document.getElementById('quick-link-tag-dot-'+ind).style.color = tagColor;
   });
+  renderQuickLinkNotes('All notes');
 }
 function renderQuickLinkNotes(ind) {
   var tagData = loadTagData();
@@ -334,7 +338,74 @@ function renderQuickLinkNotes(ind) {
   });
   renderNoteCards(ind);
 }
-
+function manageQuickLinks(){
+  const manageQuickLinks = `<div class="manage-quick-links-div"><div class="manage-quick-links-title">Manage Quick Links</div><div id="manage-quick-links" class="manage-quick-links-list"></div></div>`
+  document.getElementById("new-note-container").innerHTML = manageQuickLinks;
+  var manageQuickLinksDiv = document.getElementById('manage-quick-links')
+  var tagData = loadTagData();
+  var tagDataIndexes = Object.keys(tagData);
+  tagDataIndexes.forEach((id)=> {
+    var ind = id;
+    if (ind !== 'All notes'){
+      var tagName = tagData[id].tag_name;
+      var tagColor = tagData[id].tag_color;
+      const manageTag = `<div id="manage-quick-link-tag-${ind}" class="manage-quick-link-tag">
+                          <div class="tag-dot">
+                            <i id="manage-quick-link-tag-dot-${ind}" class="fas fa-tag"></i>
+                          </div>
+                          <div id="quick-link-tag-name-${ind}" class="tag-name">
+                            ${tagName}
+                          </div>
+                          <i class="fas fa-trash quick-link-delete" onclick="deleteQuickLink('${ind}')"></i>
+                        </div>`
+      manageQuickLinksDiv.innerHTML += manageTag;
+      document.getElementById('manage-quick-link-tag-dot-'+ind).style.color = tagColor;
+    }
+  });
+  manageQuickLinksDiv.innerHTML += `<div id="quick-link-add-div" class="quick-link-add-div"><i class="fas fa-plus quick-link-add" onclick="handleAddQuickLink()"></i><div>`
+}
+function deleteQuickLink(ind){
+  var tagData = loadTagData();
+  var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
+  var articleIndexes = Object.keys(notesDetails);
+  articleIndexes.reverse();
+  articleIndexes.forEach((id)=> {
+    var tagId = notesDetails[id].tagId;
+    if (tagId == ind) {
+      console.log('inside if', ind)
+      notesDetails[id].tagId = 'All notes';
+    }
+  });
+  delete tagData[ind];
+  localStorage.setItem('tagData', JSON.stringify(tagData));
+  localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
+  manageQuickLinks();
+  renderQuickLinks();
+}
+function handleAddQuickLink(){
+  document.getElementById('quick-link-add-div').innerHTML = `<div id="manage-quick-link-tag-new" class="manage-quick-link-tag">
+                                                              <div class="tag-dot-new">
+                                                              <input type="color" id="tag-color-pick" class="tag-color-pick" value="#ffffff">
+                                                              </div>
+                                                              <input type="text" id="quick-link-tag-name-new" class="tag-name-new" autoFocus placeholder="Tag Name"><//input>
+                                                              <i class="fas fa-check quick-link-check" onclick="addNewQuickLink()"></i>
+                                                              <i class="fas fa-times quick-link-times" onclick="closeAddQuickLink()"></i>
+                                                            </div>`
+}
+function closeAddQuickLink(){
+  document.getElementById('quick-link-add-div').innerHTML = `<div id="quick-link-add-div" class="quick-link-add-div"><i class="fas fa-plus quick-link-add" onclick="handleAddQuickLink()"></i><div>`
+}
+function addNewQuickLink(){
+  var tagColor = document.getElementById("tag-color-pick").value;
+  var tagName = document.getElementById("quick-link-tag-name-new").value;
+  var tagData = loadTagData();
+  if (tagName !== '') {
+    tagData[tagName] = {tag_name: tagName, tag_color: tagColor}
+  }
+  localStorage.setItem('tagData', JSON.stringify(tagData));
+  manageQuickLinks();
+  renderQuickLinks();
+}
 const newNoteInputForm = `<div id="new-note-input-form" class="new-note-input-form">
                           <div class="icon-container">
                             <i class="fas fa-angle-left" onclick= "onClickNewNoteBackButton()"></i>
