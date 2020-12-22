@@ -19,7 +19,8 @@ const createWindow = () => {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      devTools: false
     }
   });
   // and load the index.html of the app.
