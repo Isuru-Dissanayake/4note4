@@ -241,6 +241,7 @@ function onClickDeleteNote(ind) {
   delete notesDetails[parseInt(ind)];
   localStorage.setItem('notesDetails', JSON.stringify(notesDetails));
   renderQuickLinkNotes(tagInd);
+  document.getElementById("new-note-container").innerHTML = createNewNoteInputForm;
 }
 function onClickEditNote(ind) {
   document.getElementById('new-note-title-div').contentEditable = true;
