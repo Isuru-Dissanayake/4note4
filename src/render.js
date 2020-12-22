@@ -318,7 +318,7 @@ function renderQuickLinks() {
                             <div class="tag-dot">
                               <i id="quick-link-tag-dot-${ind}" class="fas fa-tag"></i>
                             </div>
-                            <div id="quick-link-tag-name-${ind}" class="tag-name">
+                            <div id="quick-link-tag-name-${ind}" class="tag-name" >
                               ${tagName}
                             </div>
                           </div>`
@@ -368,15 +368,17 @@ function manageQuickLinks(){
 function deleteQuickLink(ind){
   var tagData = loadTagData();
   var notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
-  var articleIndexes = Object.keys(notesDetails);
-  articleIndexes.reverse();
-  articleIndexes.forEach((id)=> {
-    var tagId = notesDetails[id].tagId;
-    if (tagId == ind) {
-      console.log('inside if', ind)
-      notesDetails[id].tagId = 'All notes';
-    }
-  });
+  if (notesDetails){
+    var articleIndexes = Object.keys(notesDetails);
+    articleIndexes.reverse();
+    articleIndexes.forEach((id)=> {
+      var tagId = notesDetails[id].tagId;
+      if (tagId == ind) {
+        console.log('inside if', ind)
+        notesDetails[id].tagId = 'All notes';
+      }
+    });
+  }
   delete tagData[ind];
   localStorage.setItem('tagData', JSON.stringify(tagData));
   localStorage.setItem('notesDetails', JSON.stringify(notesDetails));

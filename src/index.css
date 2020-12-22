@@ -436,6 +436,7 @@ body {
   border-radius: 15px;
 }
 .tag-name {
+  text-overflow: ellipsis;
   margin-top: 0px;
   font-size: 14px;
   color: #ffffff;
@@ -491,10 +492,11 @@ body {
   flex-direction: row;
   cursor: pointer;
   padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   margin-right: 5px;
   margin-left: 5px;
   margin-bottom: 5px;
-  height: 30px;
   align-items: center;
   border-radius: 15px;
   overflow: hidden;

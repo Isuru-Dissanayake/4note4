@@ -20,7 +20,7 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
-      devTools: false
+      //devTools: false
     }
   });
   // and load the index.html of the app.
