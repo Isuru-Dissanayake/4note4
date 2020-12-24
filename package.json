@@ -10,20 +10,22 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "build:installer" : "electron-builder"
+    "build:installer": "electron-builder"
   },
-  "build" : {
-    "appId" : "4note4",
-    "win" : {
-      "target" : ["nsis"],
-      "icon" : "src/assets/images/app-icon.ico"
+  "build": {
+    "appId": "4note4",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "src/assets/images/app-icon.ico"
     },
-    "nsis" : {
-      "installerIcon" : "src/assets/images/app-icon.ico",
-      "uninstallerIcon" : "src/assets/images/app-icon.ico",
-      "uninstallDisplayName" : "4NOTE4",
-      "oneClick" : false,
-      "allowToChangeInstallationDirectory" : true
+    "nsis": {
+      "installerIcon": "src/assets/images/app-icon.ico",
+      "uninstallerIcon": "src/assets/images/app-icon.ico",
+      "uninstallDisplayName": "4NOTE4",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   },
   "keywords": [],
@@ -60,7 +62,9 @@
     }
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-is-dev": "^1.2.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.54",

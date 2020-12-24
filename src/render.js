@@ -1,7 +1,15 @@
-const { desktopCapturer, remote, ipcRenderer, BrowserWindow } = require('electron');
+const { desktopCapturer, remote, ipcRenderer, BrowserWindow, autoUpdater, dialog } = require('electron');
 const { writeFile } = require('fs');
 const { get } = require('https');
 const { dialog, Menu } = remote;
+const isDev = require('electron-is-dev');
+
+if (isDev) {
+	console.log('Running in development');
+} else {
+  console.log('Running in production');
+  
+}
 
 window.onload = function() {
   loadNotesDetails();
@@ -194,7 +202,7 @@ function renderNoteCards(tagType) {
   var tagData = loadTagData();
   console.log('tagdata', tagData)
   var notesDetails = localStorage.getItem('notesDetails');
-  if (notesDetails === null){
+  if (notesDetails === null || notesDetails === 'null'){
     notesDetails = {}
   } else {
     notesDetails = JSON.parse(localStorage.getItem('notesDetails'));
